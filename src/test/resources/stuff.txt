@@ -1,0 +1,5 @@
+1;Ivan Ivanovich Ivanov;1
+2;Maria Ivanovna;4
+3;Vanya;9
+4;Sveta;6
+5;Cezar;9
