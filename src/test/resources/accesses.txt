@@ -1,4 +1,4 @@
-1;Full Access;
+1;Full Access;0
  2;Office entrance;1
  3;Internet;1
   4;Search engines;3
