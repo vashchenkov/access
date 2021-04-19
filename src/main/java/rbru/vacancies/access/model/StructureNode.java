@@ -14,4 +14,8 @@ public abstract class StructureNode {
     private int parentId;
     private StructureNode parent;
     private List<Access> accesses = new ArrayList<>();
+
+    public void permit(Access access){
+        accesses.add(access);
+    }
 }

@@ -1,6 +1,5 @@
 package rbru.vacancies.access;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import rbru.vacancies.access.model.Access;
 import rbru.vacancies.access.model.StructureNode;
@@ -18,23 +17,23 @@ public class ProcessTests {
     }
 
     private Processor sut = new Processor();
-    private StructureNode struture = TestDataReader.readStructure();
-    private Access access = TestDataReader.readAccess();
-
 
     @Test
     public void ShouldReturnTrueWhenCheckYandexAccessForVanya() {
-        User vanya = getUser("Vanya");
-        Access yandex = getAccess("Yandex");
+        User vanya = (User) getUser(VANYA_ID);
+        Access yandex = getAccess(YANDEX_ID);
         boolean result = sut.checkAccess(vanya, yandex);
         assertTrue(result);
     }
 
-    private User getUser(String username) {
-        return null;
+    private StructureNode getUser(int userId) {
+        return TestDataReader.structureHolder.get(userId);
     }
 
-    private Access getAccess(String accessname) {
-        return null;
+    private Access getAccess(int accessId) {
+        return TestDataReader.accessHolder.get(accessId);
     }
+
+    private final static int VANYA_ID = 13;
+    private final static int YANDEX_ID = 7;
 }

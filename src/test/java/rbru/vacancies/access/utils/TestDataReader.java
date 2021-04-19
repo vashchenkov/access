@@ -9,12 +9,16 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TestDataReader {
     private static StructureFactory structureFactory = new StructureFactory();
     private static AccessFactory accessFactory = new AccessFactory();
+    public static Map<Integer, StructureNode> structureHolder = new HashMap<>();
+    public static Map<Integer, Access> accessHolder = new HashMap<>();
 
     public static StructureNode readStructure() throws URISyntaxException, IOException {
 
@@ -26,21 +30,21 @@ public class TestDataReader {
         StructureNode[] previous = new StructureNode[1];
         StructureNode[] current = new StructureNode[1];
         lines.forEach(it -> {
-                    current[0] = it;
-                    if ((current[0]).getParentId() == 0) {
-                        previous[0] = current[0];
-                        return;
-                    }
-                    while (current[0].getParentId() != previous[0].getId()) {
-                        previous[0] = previous[0].getParent();
-                    }
-                    if (previous[0] != null) {
-                        ((Department) previous[0]).addChild(current[0]);
-                        current[0].setParent(previous[0]);
-                    }
-                    previous[0] = current[0];
-                }
-        );
+            structureHolder.put(it.getId(), it);
+            current[0] = it;
+            if ((current[0]).getParentId() == 0) {
+                previous[0] = current[0];
+                return;
+            }
+            while (current[0].getParentId() != previous[0].getId()) {
+                previous[0] = previous[0].getParent();
+            }
+            if (previous[0] != null) {
+                ((Department) previous[0]).addChild(current[0]);
+                current[0].setParent(previous[0]);
+            }
+            previous[0] = current[0];
+        });
         return first;
     }
 
@@ -54,25 +58,35 @@ public class TestDataReader {
         Access[] previous = new Access[1];
         Access[] current = new Access[1];
         lines.forEach(it -> {
-                    current[0] = it;
-                    if ((current[0]).getParentId() == 0) {
-                        previous[0] = current[0];
-                        return;
-                    }
-                    while (current[0].getParentId() != previous[0].getId()) {
-                        previous[0] = previous[0].getParent();
-                    }
-                    if (previous[0] != null) {
-                        previous[0].addChild(current[0]);
-                        current[0].setParent(previous[0]);
-                    }
-                    previous[0] = current[0];
-                }
-        );
+            accessHolder.put(it.getId(), it);
+            current[0] = it;
+            if ((current[0]).getParentId() == 0) {
+                previous[0] = current[0];
+                return;
+            }
+            while (current[0].getParentId() != previous[0].getId()) {
+                previous[0] = previous[0].getParent();
+            }
+            if (previous[0] != null) {
+                previous[0].addChild(current[0]);
+                current[0].setParent(previous[0]);
+            }
+            previous[0] = current[0];
+        });
+        grantRights();
         return first;
     }
 
-    static StructureNode readAccesses() {
-        return null;
+    private static void grantRights() throws URISyntaxException, IOException {
+        URL systemResource = ClassLoader.getSystemResource("permissions.txt");
+        Files.readAllLines(Paths.get(systemResource.toURI()))
+                .stream().forEach(it -> {
+                    String[] permissions = it.split(";");
+                    StructureNode sn = structureHolder.get(Integer.parseInt(permissions[0]));
+                    Access access = accessHolder.get(Integer.parseInt(permissions[1]));
+                    sn.permit(access);
+                });
+
     }
+
 }
