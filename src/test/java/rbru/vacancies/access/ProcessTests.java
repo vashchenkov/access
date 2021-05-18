@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import rbru.vacancies.access.model.Access;
 import rbru.vacancies.access.model.StructureNode;
 import rbru.vacancies.access.model.User;
+import rbru.vacancies.access.repository.AccessRepository;
+import rbru.vacancies.access.repository.StructureRepository;
 import rbru.vacancies.access.utils.TestDataReader;
 
 import java.io.IOException;
@@ -13,7 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProcessTests {
 
+    private AccessRepository accessRepository = AccessRepository.getInstance();
+    private StructureRepository structureRepository = StructureRepository.getInstance();
+
     public ProcessTests() throws URISyntaxException, IOException {
+        TestDataReader.readStructure();
+        TestDataReader.readAccess();
     }
 
     private Processor sut = new Processor();
@@ -26,12 +33,12 @@ public class ProcessTests {
         assertTrue(result);
     }
 
-    private StructureNode getUser(int userId) {
-        return TestDataReader.structureHolder.get(userId);
+    private StructureNode getUser(int nodeId) {
+        return structureRepository.getStructureNodeById(nodeId);
     }
 
     private Access getAccess(int accessId) {
-        return TestDataReader.accessHolder.get(accessId);
+        return accessRepository.getAccessById(accessId);
     }
 
     private final static int VANYA_ID = 13;
